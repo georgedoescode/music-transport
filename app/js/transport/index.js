@@ -4,22 +4,22 @@ export default class Transport {
     constructor(bpm = 120) {
         this.bpm = bpm;
         this.worker = new TransportWorker();
-        this.listeners = [];
     }
 
-    start() {
+    start(callback) {
         this.worker.postMessage({ action: "SET_BPM", bpm: this.bpm });
         this.worker.postMessage({ action: "TRANSPORT_START" });
 
         this.worker.onmessage = e => {
             if (e.data.event === "TRANSPORT_TICK") {
                 this.beatCount = e.data.beatCount;
-                this.listeners.forEach(listener => listener.call(this));
+                callback();
             }
         };
     }
-
-    addListener(listener) {
-        this.listeners.push(listener);
+    
+    setBpm(bpm) {
+        this.bpm = bpm;
+        this.worker.postMessage({ action: "SET_BPM", bpm: this.bpm })
     }
 }

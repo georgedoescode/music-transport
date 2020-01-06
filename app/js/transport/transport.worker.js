@@ -1,22 +1,18 @@
 self.state = {
     intervalDuration: 0,
-    interval: null,
     beatCount: 0,
-    maxBeatCount: 31
+    maxBeatCount: 15
 };
 
 self.onmessage = e => {
     switch (e.data.action) {
         case "TRANSPORT_START":
-            self.state.interval = setInterval(
-                self.tick,
-                self.state.intervalDuration
-            );
+            self.tick();
             break;
         case "TRANSPORT_STOP":
             break;
         case "SET_BPM":
-            self.state.intervalDuration = ((60 / e.data.bpm) * 1000) / 8;
+            self.state.intervalDuration = ((60 / e.data.bpm) * 1000) / 4;
             break;
         default:
             break;
@@ -34,4 +30,6 @@ self.tick = () => {
     } else {
         self.state.beatCount = 0;
     }
+
+    setTimeout(self.tick, self.state.intervalDuration)
 };
