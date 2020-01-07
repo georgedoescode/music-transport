@@ -1,8 +1,10 @@
 export default class WeightedRhythmGenerator {
-    constructor({ probabilities = {} }) {
+    constructor({ probabilities = {}, regenerate = true }) {
         this.probabilities = probabilities;
         this.weights = [];
         this.beats = 16;
+        this.regenerate = regenerate;
+        this.lastBeat = 0;
 
         this.setup();
     }
@@ -16,9 +18,7 @@ export default class WeightedRhythmGenerator {
 
         for(let i = 0; i < this.beats; i++) {
             let beatWasSet = false;
-            // For each beat, iterate through probabilities.
             Object.keys(this.probabilities).forEach(beat => {
-                // There is a chance that a beat should be played here
                 if(i % ~~beat === 0 && !weights[i]) {
                     const probability = this.probabilities[beat];
                     if(probability >= Math.random()) {
@@ -27,7 +27,6 @@ export default class WeightedRhythmGenerator {
                     }
                 }
             });
-            // None of the beats / probabilities managed to add the note, return 0
             if(!beatWasSet) {
                 weights[i] = 0;
             }
@@ -37,6 +36,10 @@ export default class WeightedRhythmGenerator {
     }
 
     check(beat) {
+        if(this.lastBeat === this.beats - 1 && this.regenerate) {
+            this.generate();
+        }
+        this.lastBeat = beat;
         return !!this.weights[beat];
     }
 }
