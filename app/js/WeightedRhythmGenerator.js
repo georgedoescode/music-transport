@@ -35,6 +35,10 @@ export default class WeightedRhythmGenerator {
         this.weights = weights;
     }
 
+    setProbabilities(probabilities) {
+        this.probabilities = probabilities;
+    }
+
     check(beat) {
         if(this.lastBeat === this.beats - 1 && this.regenerate) {
             this.generate();
